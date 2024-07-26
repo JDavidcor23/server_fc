@@ -30,14 +30,16 @@ async function getInputValueAndName(numbersProperties) {
     );
 
     // Probar con otra URL primero para verificar conectividad
+    console.log("navegando a Google");
     await page.goto("https://www.google.com", {
       timeout: 60000, // 1 minuto de espera
       waitUntil: "networkidle2",
     });
     console.log("Google cargado correctamente");
 
+    console.log("navegando a Sofifa");
     await page.goto("https://sofifa.com/calculator?hl=en-US", {
-      timeout: 120000, // Incrementar el tiempo de espera a 2 minutos
+      timeout: 220000, // Incrementar el tiempo de espera a 2 minutos
       waitUntil: "networkidle2",
     });
     console.log("se abrió la página de Sofifa");
