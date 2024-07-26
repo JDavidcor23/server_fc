@@ -3,6 +3,18 @@ const addProperties = require("./propertiesUser");
 require("dotenv").config();
 
 async function getInputValueAndName(numbersProperties) {
+  const browser = await puppeteer.launch({
+    args: [
+      "--disable-setuid-sandbox",
+      "--no-sandbox",
+      "--single-process",
+      "--no-zygote",
+    ],
+    executablePath:
+      process.env.NODE_ENV === "production"
+        ? process.env.PUPPETEER_EXECUTABLE_PATH
+        : puppeteer.executablePath(),
+  });
   try {
     if (numbersProperties.length !== 29) {
       throw new Error(
@@ -10,22 +22,8 @@ async function getInputValueAndName(numbersProperties) {
       );
     }
     const propertiesUser = addProperties(numbersProperties);
-
-    const browser = await puppeteer.launch({
-      headless: "new",
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--single-process",
-        "--no-zygote",
-      ],
-      executablePath:
-        process.env.NODE_ENV === "production"
-          ? process.env.PUPPETEER_EXECUTABLE_PATH
-          : puppeteer.executablePath(),
-    });
-
     const page = await browser.newPage();
+    
 
     // Cambiar el user agent
     await page.setUserAgent(

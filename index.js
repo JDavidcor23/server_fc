@@ -5,7 +5,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-
+const PORT = process.env.PORT || 4000;
 app.post("/getCalculation", (req, res) => {
   const {numbersProperties} = req.body;
   if(!numbersProperties) {
@@ -20,6 +20,6 @@ app.post("/getCalculation", (req, res) => {
     });
 });
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
