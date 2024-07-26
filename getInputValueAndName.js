@@ -4,12 +4,7 @@ require("dotenv").config();
 
 async function getInputValueAndName(numbersProperties) {
   const browser = await puppeteer.launch({
-    args: [
-      "--disable-setuid-sandbox",
-      "--no-sandbox",
-      "--single-process",
-      "--no-zygote",
-    ],
+    args: ["--disable-setuid-sandbox", "--no-sandbox"],
     executablePath:
       process.env.NODE_ENV === "production"
         ? process.env.PUPPETEER_EXECUTABLE_PATH
@@ -35,15 +30,17 @@ async function getInputValueAndName(numbersProperties) {
     );
 
     await page.goto("https://sofifa.com/calculator?hl=en-US", {
-      timeout: 90000,
+      timeout: 120000, // Incrementar el tiempo de espera a 2 minutos
       waitUntil: "networkidle2",
     });
     console.log("se abrió la página");
-    console.log("La página ha cargado correctamente.");
+
+    // Verificar el título de la página
+    const pageTitle = await page.title();
+    console.log(`Título de la página: ${pageTitle}`);
 
     // Esperar explícitamente a que los inputs estén presentes
     await page.waitForSelector(".calc", { timeout: 90000 });
-
     console.log("Inputs encontrados");
 
     const properties = await page.$$eval(".calc", (inputs) => {
@@ -58,7 +55,7 @@ async function getInputValueAndName(numbersProperties) {
           `Escribiendo en input: ${inputName} con valor: ${inputValue}`
         );
         await page.type(`input[name="${inputName}"]`, inputValue.toString());
-        await page.waitForTimeout(100); // Añadir un pequeño retraso
+        await delay(100); // Añadir un pequeño retraso
       }
     }
 
@@ -105,6 +102,12 @@ async function getInputValueAndName(numbersProperties) {
     await browser.close();
     console.log("Navegador cerrado");
   }
+}
+
+function delay(time) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, time);
+  });
 }
 
 module.exports = getInputValueAndName;
