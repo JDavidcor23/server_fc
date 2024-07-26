@@ -7,8 +7,8 @@ async function getInputValueAndName(numbersProperties) {
     args: [
       "--disable-setuid-sandbox",
       "--no-sandbox",
-      "--single-process",
-      "--no-zygote",
+      // "--single-process",
+      // "--no-zygote",
     ],
     executablePath:
       process.env.NODE_ENV === "production"
@@ -31,7 +31,7 @@ async function getInputValueAndName(numbersProperties) {
     );
 
     await page.goto("https://sofifa.com/calculator?hl=en-US", {
-      timeout: 60000,
+      timeout: 90000,
       waitUntil: "networkidle2",
     });
 
