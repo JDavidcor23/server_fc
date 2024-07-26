@@ -7,14 +7,15 @@ async function getInputValueAndName(numbersProperties) {
     args: [
       "--disable-setuid-sandbox",
       "--no-sandbox",
-      // "--single-process",
-      // "--no-zygote",
+      "--single-process",
+      "--no-zygote",
     ],
     executablePath:
       process.env.NODE_ENV === "production"
         ? process.env.PUPPETEER_EXECUTABLE_PATH
         : puppeteer.executablePath(),
   });
+
   try {
     console.log("empieza el proceso");
     if (numbersProperties.length !== 29) {
@@ -25,8 +26,8 @@ async function getInputValueAndName(numbersProperties) {
     const propertiesUser = addProperties(numbersProperties);
     console.log("se añadieron las propiedades del usuario");
     console.log("se abre el navegador");
+
     const page = await browser.newPage();
-    
 
     // Cambiar el user agent
     await page.setUserAgent(
@@ -36,14 +37,14 @@ async function getInputValueAndName(numbersProperties) {
     await page.goto("https://sofifa.com/calculator?hl=en-US", {
       timeout: 90000,
       waitUntil: "networkidle2",
-    }).then(() => console.log("se abrió la página"));
-
-    // Alerta de que la página ha cargado
+    });
+    console.log("se abrió la página");
     console.log("La página ha cargado correctamente.");
-    
-    
+
     // Esperar explícitamente a que los inputs estén presentes
     await page.waitForSelector(".calc", { timeout: 90000 });
+
+    console.log("Inputs encontrados");
 
     const properties = await page.$$eval(".calc", (inputs) => {
       return inputs.map((input) => input.getAttribute("name"));
@@ -53,15 +54,20 @@ async function getInputValueAndName(numbersProperties) {
       const inputName = property;
       const inputValue = propertiesUser[property];
       if (properties.includes(inputName)) {
+        console.log(
+          `Escribiendo en input: ${inputName} con valor: ${inputValue}`
+        );
         await page.type(`input[name="${inputName}"]`, inputValue.toString());
+        await page.waitForTimeout(100); // Añadir un pequeño retraso
       }
     }
 
     await page.keyboard.press("Enter");
 
     // Esperar explícitamente a que las posiciones estén presentes
-    await page.waitForSelector(".lineup .pos");
+    await page.waitForSelector(".lineup .pos", { timeout: 90000 });
     console.log("Las posiciones han sido encontradas.");
+
     const positions = await page.$$eval(".lineup .pos", (positions) => {
       return positions.map((position) => {
         const positionText = position.innerText.split("\n")[0].trim();
@@ -71,6 +77,7 @@ async function getInputValueAndName(numbersProperties) {
       });
     });
     console.log("Las posiciones han sido extraídas.");
+
     const sortedPositions = positions.sort((a, b) => b.number - a.number);
 
     const uniquePositions = new Set();
@@ -92,9 +99,11 @@ async function getInputValueAndName(numbersProperties) {
 
     return positionsArray;
   } catch (error) {
+    console.error("Error durante la ejecución:", error);
     throw error;
-  }finally {
+  } finally {
     await browser.close();
+    console.log("Navegador cerrado");
   }
 }
 
