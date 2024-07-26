@@ -29,11 +29,18 @@ async function getInputValueAndName(numbersProperties) {
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     );
 
+    // Probar con otra URL primero para verificar conectividad
+    await page.goto("https://www.google.com", {
+      timeout: 60000, // 1 minuto de espera
+      waitUntil: "networkidle2",
+    });
+    console.log("Google cargado correctamente");
+
     await page.goto("https://sofifa.com/calculator?hl=en-US", {
       timeout: 120000, // Incrementar el tiempo de espera a 2 minutos
       waitUntil: "networkidle2",
     });
-    console.log("se abrió la página");
+    console.log("se abrió la página de Sofifa");
 
     // Verificar el título de la página
     const pageTitle = await page.title();
