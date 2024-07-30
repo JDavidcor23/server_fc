@@ -7,6 +7,7 @@ app.use(cors());
 app.use(express.json());
 const PORT = process.env.PORT || 4000;
 app.post("/getCalculation", (req, res) => {
+  console.log("Request received");
   const {numbersProperties} = req.body;
   if(!numbersProperties) {
     return res.status(400).json({error: "The numbersProperties field is required"});
@@ -20,6 +21,6 @@ app.post("/getCalculation", (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running at http://192.168.1.16:${PORT}/`);
 });
